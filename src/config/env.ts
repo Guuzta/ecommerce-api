@@ -14,7 +14,7 @@ const envSchema = z.object({
 
   PORT: z.coerce.number().int().positive(),
 
-  //DATABASE_URL: z.string().min(1),
+  DATABASE_URL: z.string().min(1),
 
   //TOKEN_SECRET: z.string().min(1),
   //TOKEN_EXPIRATION: z.string().min(1),
