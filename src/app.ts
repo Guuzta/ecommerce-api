@@ -3,7 +3,7 @@ import express from "express";
 import healthRoutes from "./routes/healthRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
-import errorHandler from "./middleware/errorHandler.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
 

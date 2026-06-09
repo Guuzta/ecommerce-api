@@ -1,13 +1,20 @@
 import type { Request, Response, NextFunction } from "express";
-import AppError from "../utils/AppError.js";
+
+import * as authService from "../services/authService.js";
+
+import type { RegisterBody } from "../schemas/registerSchema.js";
+
+import type { RegisterResponse } from "../types/auth.js";
 
 const register = async (
-  req: Request,
-  res: Response,
+  req: Request<{}, {}, RegisterBody>,
+  res: Response<RegisterResponse>,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    throw new AppError("TESTANDO ERRO", 403);
+    const message = await authService.register(req.body);
+
+    res.status(201).json(message);
   } catch (error) {
     next(error);
   }
