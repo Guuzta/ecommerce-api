@@ -9,7 +9,11 @@ export const registerSchema = z
       .min(4, "Name must be at least 4 characters")
       .max(12, "Name must be at most 12 characters"),
 
-    email: z.email("Invalid email address").trim().toLowerCase(),
+    email: z.preprocess(
+      (value) =>
+        typeof value === "string" ? value.trim().toLowerCase() : value,
+      z.email("Invalid email"),
+    ),
 
     password: z
       .string()
