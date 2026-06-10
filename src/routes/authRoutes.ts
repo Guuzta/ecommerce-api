@@ -3,6 +3,7 @@ import { Router } from "express";
 import * as authController from "../controllers/authController.js";
 
 import validateInput from "../middlewares/validateInput.js";
+import loginRateLimiter from "../middlewares/loginRateLimiter.js";
 
 import { registerSchema } from "../schemas/registerSchema.js";
 import { loginUserSchema } from "../schemas/loginSchema.js";
@@ -17,6 +18,7 @@ router.post(
 
 router.post(
   "/login",
+  loginRateLimiter,
   validateInput(loginUserSchema, "body"),
   authController.login,
 );
