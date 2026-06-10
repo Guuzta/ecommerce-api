@@ -4,7 +4,9 @@ import AppError from "../utils/AppError.js";
 import * as passwordHash from "../utils/passwordHash.js";
 
 import type { RegisterBody } from "../schemas/registerSchema.js";
-import type { RegisterResponse } from "../types/auth.js";
+import type { LoginBody } from "../schemas/loginSchema.js";
+
+import type { LoginResponse, RegisterResponse } from "../types/auth.js";
 
 const register = async (data: RegisterBody): Promise<RegisterResponse> => {
   const { name, email, password } = data;
@@ -37,4 +39,31 @@ const register = async (data: RegisterBody): Promise<RegisterResponse> => {
   };
 };
 
-export { register };
+const login = async (data: LoginBody): Promise<LoginResponse> => {
+  const { email, password } = data;
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    throw new AppError("Invalid credentials", 401);
+  }
+
+  const isPasswordValid = await passwordHash.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    throw new AppError("Invalid credentials", 401);
+  }
+
+  return {
+    message: "Login successful",
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
+  };
+};
+
+export { register, login };
