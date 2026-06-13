@@ -2,11 +2,13 @@ import { prisma } from "../lib/prisma.js";
 
 import AppError from "../utils/AppError.js";
 import * as passwordHash from "../utils/passwordHash.js";
+import * as token from "../utils/token.js";
 
 import type { RegisterBody } from "../schemas/registerSchema.js";
 import type { LoginBody } from "../schemas/loginSchema.js";
 
-import type { LoginResponse, RegisterResponse } from "../types/auth.js";
+import type { RegisterResponse } from "../types/auth.js";
+import type { Tokens } from "../types/jwt.js";
 
 const register = async (data: RegisterBody): Promise<RegisterResponse> => {
   const { name, email, password } = data;
@@ -39,7 +41,7 @@ const register = async (data: RegisterBody): Promise<RegisterResponse> => {
   };
 };
 
-const login = async (data: LoginBody): Promise<LoginResponse> => {
+const login = async (data: LoginBody): Promise<Tokens> => {
   const { email, password } = data;
 
   const user = await prisma.user.findUnique({
@@ -56,13 +58,14 @@ const login = async (data: LoginBody): Promise<LoginResponse> => {
     throw new AppError("Invalid credentials", 401);
   }
 
+  const accessToken = token.generateAccessToken({
+    sub: user.id,
+    name: user.name,
+    email: user.email,
+  });
+
   return {
-    message: "Login successful",
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    },
+    accessToken,
   };
 };
 
