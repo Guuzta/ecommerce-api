@@ -58,10 +58,17 @@ const login = async (data: LoginBody): Promise<Tokens> => {
     throw new AppError("Invalid credentials", 401);
   }
 
+  const session = await prisma.session.create({
+    data: {
+      userId: user.id,
+    },
+  });
+
   const accessToken = token.generateAccessToken({
     sub: user.id,
     name: user.name,
     email: user.email,
+    sessionId: session.id,
   });
 
   return {
