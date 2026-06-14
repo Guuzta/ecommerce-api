@@ -4,6 +4,7 @@ import * as authController from "../controllers/authController.js";
 
 import validateInput from "../middlewares/validateInput.js";
 import loginRateLimiter from "../middlewares/loginRateLimiter.js";
+import requireAuth from "../middlewares/requireAuth.js";
 
 import { registerSchema } from "../schemas/registerSchema.js";
 import { loginUserSchema } from "../schemas/loginSchema.js";
@@ -22,5 +23,11 @@ router.post(
   validateInput(loginUserSchema, "body"),
   authController.login,
 );
+
+router.post(
+  "/logout",
+  requireAuth,
+  authController.logout
+)
 
 export default router;

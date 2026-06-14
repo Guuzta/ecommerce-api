@@ -76,4 +76,14 @@ const login = async (data: LoginBody): Promise<Tokens> => {
   };
 };
 
-export { register, login };
+const logout = async (sessionId: string): Promise<{ message: string }> => {
+  await prisma.session.delete({
+    where: { id: sessionId },
+  });
+
+  return {
+    message: "Logged out successfully",
+  };
+};
+
+export { register, login, logout };
