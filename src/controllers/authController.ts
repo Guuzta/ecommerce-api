@@ -52,6 +52,8 @@ const logout = async (
 
     const message = await authService.logout(sessionId);
 
+    res.clearCookie("refreshToken");
+
     res.status(200).json(message);
   } catch (error) {
     next(error);
