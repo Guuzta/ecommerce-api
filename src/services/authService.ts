@@ -8,7 +8,7 @@ import type { RegisterBody } from "../schemas/registerSchema.js";
 import type { LoginBody } from "../schemas/loginSchema.js";
 
 import type { RegisterResponse } from "../types/auth.js";
-import type { Tokens } from "../types/jwt.js";
+import type { Token } from "../types/jwt.js";
 
 const register = async (data: RegisterBody): Promise<RegisterResponse> => {
   const { name, email, password } = data;
@@ -41,7 +41,7 @@ const register = async (data: RegisterBody): Promise<RegisterResponse> => {
   };
 };
 
-const login = async (data: LoginBody): Promise<Tokens> => {
+const login = async (data: LoginBody): Promise<Token> => {
   const { email, password } = data;
 
   const user = await prisma.user.findUnique({
@@ -71,8 +71,13 @@ const login = async (data: LoginBody): Promise<Tokens> => {
     sessionId: session.id,
   });
 
+  const refreshToken = token.generateRefreshToken({
+    sessionId: session.id,
+  });
+
   return {
     accessToken,
+    refreshToken,
   };
 };
 

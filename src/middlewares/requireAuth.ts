@@ -6,7 +6,7 @@ import { prisma } from "../lib/prisma.js";
 import AppError from "../utils/AppError.js";
 import { env } from "../config/env.js";
 
-import type { JwtPayload } from "../types/jwt.js";
+import type { AccessTokenPayload } from "../types/jwt.js";
 
 const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
@@ -22,7 +22,7 @@ const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const payload = jwt.verify(token, env.TOKEN_SECRET) as JwtPayload;
+    const payload = jwt.verify(token, env.TOKEN_SECRET) as AccessTokenPayload;
 
     const session = await prisma.session.findUnique({
       where: { id: payload.sessionId },

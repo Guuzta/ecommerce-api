@@ -19,8 +19,8 @@ const envSchema = z.object({
   TOKEN_SECRET: z.string().min(1),
   TOKEN_EXPIRATION: z.enum(["1m", "5m", "15m", "1h", "7d"]),
 
-  //REFRESH_TOKEN_SECRET: z.string().min(1),
-  //REFRESH_TOKEN_EXPIRATION: z.string().min(1),
+  REFRESH_TOKEN_SECRET: z.string().min(1),
+  REFRESH_TOKEN_EXPIRATION: z.enum(["7d", "15d", "30d"]),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
