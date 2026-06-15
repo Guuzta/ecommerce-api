@@ -1,3 +1,5 @@
+import type { Request } from "express";
+
 import { prisma } from "../lib/prisma.js";
 
 import AppError from "../utils/AppError.js";
@@ -72,6 +74,9 @@ const login = async (data: LoginBody): Promise<Token> => {
   });
 
   const refreshToken = token.generateRefreshToken({
+    sub: user.id,
+    name: user.name,
+    email: user.email,
     sessionId: session.id,
   });
 
@@ -91,4 +96,39 @@ const logout = async (sessionId: string): Promise<{ message: string }> => {
   };
 };
 
-export { register, login, logout };
+const refresh = async (req: Request): Promise<Token> => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    throw new AppError("Refresh token missing", 401);
+  }
+
+  const payload = token.verifyToken(refreshToken);
+
+  if (!payload) {
+    throw new AppError("Invalid refresh token or expired", 403);
+  }
+
+  const session = await prisma.session.findUnique({
+    where: {
+      id: payload.sessionId,
+    },
+  });
+
+  if (!session) {
+    throw new AppError("Invalid session", 401);
+  }
+
+  const { sub, name, email } = payload;
+
+  const accessToken = token.generateAccessToken({
+    sub,
+    name,
+    email,
+    sessionId: session.id,
+  });
+
+  return { accessToken };
+};
+
+export { register, login, logout, refresh };

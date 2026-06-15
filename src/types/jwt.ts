@@ -6,6 +6,9 @@ export type AccessTokenPayload = {
 };
 
 export type RefreshTokenPayload = {
+  sub: string;
+  name: string;
+  email: string;
   sessionId: string;
 };
 

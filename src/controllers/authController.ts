@@ -58,4 +58,18 @@ const logout = async (
   }
 };
 
-export { register, login, logout };
+const refresh = async (
+  req: Request,
+  res: Response<Token>,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const accessToken = await authService.refresh(req);
+
+    res.status(200).json(accessToken);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { register, login, logout, refresh };

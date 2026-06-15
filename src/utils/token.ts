@@ -20,4 +20,17 @@ function generateRefreshToken(payload: RefreshTokenPayload) {
   return refreshToken;
 }
 
-export { generateAccessToken, generateRefreshToken };
+function verifyToken(refreshToken: string): RefreshTokenPayload | null {
+  try {
+    const payload = jwt.verify(
+      refreshToken,
+      env.REFRESH_TOKEN_SECRET,
+    ) as RefreshTokenPayload;
+
+    return payload;
+  } catch (error) {
+    return null;
+  }
+}
+
+export { generateAccessToken, generateRefreshToken, verifyToken };
