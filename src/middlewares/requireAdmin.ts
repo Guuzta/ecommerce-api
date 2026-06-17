@@ -14,6 +14,8 @@ const requireAdmin = async (
   if (req.user.role !== "ADMIN") {
     throw new AppError("Only administrators can perform this action", 403);
   }
+
+  next();
 };
 
 export default requireAdmin;
