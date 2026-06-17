@@ -21,6 +21,16 @@ const envSchema = z.object({
 
   REFRESH_TOKEN_SECRET: z.string().min(1),
   REFRESH_TOKEN_EXPIRATION: z.enum(["7d", "15d", "30d"]),
+
+  ADMIN_EMAIL: z.email(),
+  ADMIN_PASSWORD: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(16, "Password must be at most 16 characters")
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]/+=;']).+$/,
+      "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
+    ),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
