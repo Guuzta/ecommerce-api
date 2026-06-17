@@ -69,6 +69,7 @@ const login = async (data: LoginBody): Promise<Token> => {
   const accessToken = token.generateAccessToken({
     sub: user.id,
     name: user.name,
+    role: user.role,
     email: user.email,
     sessionId: session.id,
   });
@@ -76,6 +77,7 @@ const login = async (data: LoginBody): Promise<Token> => {
   const refreshToken = token.generateRefreshToken({
     sub: user.id,
     name: user.name,
+    role: user.role,
     email: user.email,
     sessionId: session.id,
   });
@@ -119,12 +121,13 @@ const refresh = async (req: Request): Promise<Token> => {
     throw new AppError("Invalid session", 401);
   }
 
-  const { sub, name, email } = payload;
+  const { sub, name, role, email } = payload;
 
   const accessToken = token.generateAccessToken({
     sub,
     name,
     email,
+    role,
     sessionId: session.id,
   });
 

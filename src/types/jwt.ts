@@ -1,6 +1,7 @@
 export type AccessTokenPayload = {
   sub: string;
   name: string;
+  role: "ADMIN" | "USER";
   email: string;
   sessionId: string;
 };
@@ -8,6 +9,7 @@ export type AccessTokenPayload = {
 export type RefreshTokenPayload = {
   sub: string;
   name: string;
+  role: "ADMIN" | "USER";
   email: string;
   sessionId: string;
 };
