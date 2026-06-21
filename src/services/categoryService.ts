@@ -4,7 +4,7 @@ import { prisma } from "../lib/prisma.js";
 
 import AppError from "../utils/AppError.js";
 
-import type { Category } from "../types/category.js";
+import type { Category, CategoryListItem } from "../types/category.js";
 
 const createCategory = async (name: string): Promise<Category> => {
   const categoryExists = await prisma.category.findUnique({ where: { name } });
@@ -29,4 +29,20 @@ const createCategory = async (name: string): Promise<Category> => {
   return category;
 };
 
-export { createCategory }
+const listCategories = async (): Promise<CategoryListItem[]> => {
+  const categories = await prisma.category.findMany({
+    orderBy: {
+      name: "asc",
+    },
+
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+  });
+
+  return categories;
+};
+
+export { createCategory, listCategories };

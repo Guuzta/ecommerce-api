@@ -5,7 +5,13 @@ export type Category = {
   createdAt: Date;
 };
 
+export type CategoryListItem = Pick<Category, "id" | "name" | "slug">;
+
 export type CreateCategoryResponse = {
   message: string;
   category: Category;
+};
+
+export type ListCategoriesResponse = {
+  categories: CategoryListItem[];
 };

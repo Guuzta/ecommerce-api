@@ -2,7 +2,10 @@ import type { Request, Response, NextFunction } from "express";
 
 import type { CreateCategoryBody } from "../schemas/categorySchema.js";
 
-import type { CreateCategoryResponse } from "../types/category.js";
+import type {
+  CreateCategoryResponse,
+  ListCategoriesResponse,
+} from "../types/category.js";
 
 import * as categoryService from "../services/categoryService.js";
 
@@ -23,4 +26,20 @@ const createCategory = async (
   }
 };
 
-export { createCategory };
+const listCategories = async (
+  req: Request,
+  res: Response<ListCategoriesResponse>,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const categories = await categoryService.listCategories();
+
+    res.status(200).json({
+      categories,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createCategory, listCategories };
