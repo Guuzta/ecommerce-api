@@ -7,7 +7,7 @@ import requireAdmin from "../middlewares/requireAdmin.js";
 import validateInput from "../middlewares/validateInput.js";
 
 import { createProductSchema } from "../schemas/productSchema.js";
-import { listProductsSchema } from "../schemas/listProductsSchema.js";
+import { getProductSchema } from "../schemas/getProductSchema.js";
 
 const router = Router();
 
@@ -23,5 +23,11 @@ router.get(
   "/products",
   productController.listProducts,
 );
+
+router.get(
+  '/products/:id',
+  validateInput(getProductSchema, "params"),
+  productController.getProductById
+)
 
 export default router;

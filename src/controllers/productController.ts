@@ -4,8 +4,12 @@ import * as productService from "../services/productService.js";
 
 import type { CreateProductBody } from "../schemas/productSchema.js";
 import type { ListProductsQuery } from "../schemas/listProductsSchema.js";
+import type { GetProductParams } from "../schemas/getProductSchema.js";
 
-import type { CreateProductResponse } from "../types/product.js";
+import type {
+  CreateProductResponse,
+  GetProductByIdResponse,
+} from "../types/product.js";
 
 const createProduct = async (
   req: Request<{}, {}, CreateProductBody>,
@@ -38,4 +42,20 @@ const listProducts = async (
   }
 };
 
-export { createProduct, listProducts };
+const getProductById = async (
+  req: Request<GetProductParams>,
+  res: Response<GetProductByIdResponse>,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const product = await productService.getProductById(req.params);
+
+    res.status(200).json({
+      product,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createProduct, listProducts, getProductById };

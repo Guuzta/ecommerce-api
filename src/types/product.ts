@@ -34,3 +34,7 @@ export type ListProductsResponse = {
     totalPages: number;
   };
 };
+
+export type GetProductByIdResponse = {
+  product: Product;
+};

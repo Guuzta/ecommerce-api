@@ -11,6 +11,7 @@ import {
   listProductsSchema,
   type ListProductsQuery,
 } from "../schemas/listProductsSchema.js";
+import type { GetProductParams } from "../schemas/getProductSchema.js";
 
 const createProduct = async (data: CreateProductBody): Promise<Product> => {
   const { name, price, categoryId, description } = data;
@@ -126,4 +127,35 @@ const listProducts = async (
   };
 };
 
-export { createProduct, listProducts };
+const getProductById = async (params: GetProductParams): Promise<Product> => {
+  const { id } = params;
+
+  const product = await prisma.product.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      price: true,
+
+      category: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  });
+
+  if (!product) {
+    throw new AppError("Product not found", 404);
+  }
+
+  return {
+    ...product,
+    price: Number(product.price),
+  };
+};
+
+export { createProduct, listProducts, getProductById };
