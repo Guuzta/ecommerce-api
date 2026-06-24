@@ -20,6 +20,7 @@ export type ListProductsResponse = {
   products: {
     id: string;
     name: string;
+    slug: string;
     description: string | null;
     price: number;
     category: {

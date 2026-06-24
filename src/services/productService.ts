@@ -112,6 +112,7 @@ const listProducts = async (
       select: {
         id: true,
         name: true,
+        slug: true,
         description: true,
         price: true,
         category: {
