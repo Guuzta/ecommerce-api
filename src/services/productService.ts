@@ -1,10 +1,16 @@
 import { prisma } from "../lib/prisma.js";
+import { Prisma } from "@prisma/client";
 
 import AppError from "../utils/AppError.js";
 
 import type { CreateProductBody } from "../schemas/productSchema.js";
 
-import type { Product } from "../types/product.js";
+import type { ListProductsResponse, Product } from "../types/product.js";
+
+import {
+  listProductsSchema,
+  type ListProductsQuery,
+} from "../schemas/listProductsSchema.js";
 
 const createProduct = async (data: CreateProductBody): Promise<Product> => {
   const { name, price, categoryId, description } = data;
@@ -47,4 +53,77 @@ const createProduct = async (data: CreateProductBody): Promise<Product> => {
   };
 };
 
-export { createProduct };
+const listProducts = async (
+  query: ListProductsQuery,
+): Promise<ListProductsResponse> => {
+  const { page, limit, search, category, sort } =
+    listProductsSchema.parse(query);
+
+  const skip = (page - 1) * limit;
+
+  const where: Prisma.ProductWhereInput = {
+    ...(search && {
+      name: {
+        contains: search,
+        mode: "insensitive",
+      },
+    }),
+
+    ...(category && {
+      category: {
+        slug: category,
+      },
+    }),
+  };
+
+  const orderBy: Prisma.ProductOrderByWithRelationInput =
+    sort === "price_asc"
+      ? { price: "asc" }
+      : sort === "price_desc"
+        ? { price: "desc" }
+        : sort === "name_asc"
+          ? { name: "asc" }
+          : { createdAt: "desc" };
+
+  const [products, total] = await Promise.all([
+    prisma.product.findMany({
+      where,
+      skip,
+      take: limit,
+      orderBy,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        price: true,
+        category: {
+          select: {
+            name: true,
+            slug: true,
+          },
+        },
+      },
+    }),
+
+    prisma.product.count({
+      where,
+    }),
+  ]);
+
+  const formattedProducts = products.map((product) => ({
+    ...product,
+    price: product.price.toNumber(),
+  }));
+
+  return {
+    products: formattedProducts,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+export { createProduct, listProducts };

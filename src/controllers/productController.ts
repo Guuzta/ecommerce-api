@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import * as productService from "../services/productService.js";
 
 import type { CreateProductBody } from "../schemas/productSchema.js";
+import type { ListProductsQuery } from "../schemas/listProductsSchema.js";
 
 import type { CreateProductResponse } from "../types/product.js";
 
@@ -23,4 +24,18 @@ const createProduct = async (
   }
 };
 
-export { createProduct };
+const listProducts = async (
+  req: Request<{}, {}, {}, ListProductsQuery>,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const products = await productService.listProducts(req.query);
+
+    res.status(200).json(products);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createProduct, listProducts };

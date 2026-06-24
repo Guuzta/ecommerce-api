@@ -14,3 +14,23 @@ export type CreateProductResponse = {
   message: string;
   product: Product;
 };
+
+export type ListProductsResponse = {
+  products: {
+    id: string;
+    name: string;
+    description: string | null;
+    price: number;
+    category: {
+      name: string;
+      slug: string;
+    };
+  }[];
+
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
