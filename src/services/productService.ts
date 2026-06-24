@@ -1,3 +1,5 @@
+import slugify from "slugify";
+
 import { prisma } from "../lib/prisma.js";
 import { Prisma } from "@prisma/client";
 
@@ -24,9 +26,23 @@ const createProduct = async (data: CreateProductBody): Promise<Product> => {
     throw new AppError("Category not found", 404);
   }
 
+  const slug = slugify(name, {
+    lower: true,
+    strict: true,
+  });
+
+  const productExists = await prisma.product.findUnique({
+    where: { slug },
+  });
+
+  if (productExists) {
+    throw new AppError("Product already exists", 409);
+  }
+
   const product = await prisma.product.create({
     data: {
       name,
+      slug,
       description,
       price,
       categoryId,
@@ -35,6 +51,7 @@ const createProduct = async (data: CreateProductBody): Promise<Product> => {
     select: {
       id: true,
       name: true,
+      slug: true,
       description: true,
       price: true,
 
