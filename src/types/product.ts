@@ -37,6 +37,6 @@ export type ListProductsResponse = {
   };
 };
 
-export type GetProductByIdResponse = {
+export type GetProductBySlugResponse = {
   product: Product;
 };

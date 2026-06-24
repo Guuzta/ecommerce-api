@@ -8,7 +8,7 @@ import type { GetProductParams } from "../schemas/getProductSchema.js";
 
 import type {
   CreateProductResponse,
-  GetProductByIdResponse,
+  GetProductBySlugResponse,
 } from "../types/product.js";
 
 const createProduct = async (
@@ -42,13 +42,13 @@ const listProducts = async (
   }
 };
 
-const getProductById = async (
+const getProductBySlug = async (
   req: Request<GetProductParams>,
-  res: Response<GetProductByIdResponse>,
+  res: Response<GetProductBySlugResponse>,
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const product = await productService.getProductById(req.params);
+    const product = await productService.getProductBySlug(req.params);
 
     res.status(200).json({
       product,
@@ -58,4 +58,4 @@ const getProductById = async (
   }
 };
 
-export { createProduct, listProducts, getProductById };
+export { createProduct, listProducts, getProductBySlug };

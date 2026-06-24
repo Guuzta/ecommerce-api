@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 export const getProductSchema = z.object({
-  id: z.uuid("ID must be a valid UUID"),
+  slug: z
+    .string()
+    .min(2)
+    .regex(/^[a-z0-9-]+$/, "Invalid slug format"),
 });
 
 export type GetProductParams = z.infer<typeof getProductSchema>;

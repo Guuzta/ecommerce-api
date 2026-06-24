@@ -145,14 +145,15 @@ const listProducts = async (
   };
 };
 
-const getProductById = async (params: GetProductParams): Promise<Product> => {
-  const { id } = params;
+const getProductBySlug = async (params: GetProductParams): Promise<Product> => {
+  const { slug } = params;
 
   const product = await prisma.product.findUnique({
-    where: { id },
+    where: { slug },
     select: {
       id: true,
       name: true,
+      slug: true,
       description: true,
       price: true,
 
@@ -176,4 +177,4 @@ const getProductById = async (params: GetProductParams): Promise<Product> => {
   };
 };
 
-export { createProduct, listProducts, getProductById };
+export { createProduct, listProducts, getProductBySlug };

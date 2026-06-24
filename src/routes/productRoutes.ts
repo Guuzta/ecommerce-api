@@ -19,15 +19,12 @@ router.post(
   productController.createProduct,
 );
 
-router.get(
-  "/products",
-  productController.listProducts,
-);
+router.get("/products", productController.listProducts);
 
 router.get(
-  '/products/:id',
+  "/products/:slug",
   validateInput(getProductSchema, "params"),
-  productController.getProductById
-)
+  productController.getProductBySlug,
+);
 
 export default router;
