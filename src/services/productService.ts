@@ -240,4 +240,26 @@ const updateProduct = async (id: string, data: any): Promise<Product> => {
   };
 };
 
-export { createProduct, listProducts, getProductBySlug, updateProduct };
+const deleteProduct = async (id: string): Promise<{ message: string }> => {
+  const productExists = await prisma.product.findUnique({ where: { id } });
+
+  if (!productExists) {
+    throw new AppError("Product not found", 404);
+  }
+
+  await prisma.product.delete({
+    where: { id },
+  });
+
+  return {
+    message: "Product deleted successfully",
+  };
+};
+
+export {
+  createProduct,
+  listProducts,
+  getProductBySlug,
+  updateProduct,
+  deleteProduct,
+};

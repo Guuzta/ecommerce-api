@@ -38,4 +38,12 @@ router.patch(
   productController.updateProduct,
 );
 
+router.delete(
+  "/admin/products/:id",
+  requireAuth,
+  requireAdmin,
+  validateInput(idParamsSchema, "params"),
+  productController.deleteProduct,
+);
+
 export default router;

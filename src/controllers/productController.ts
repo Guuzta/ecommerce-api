@@ -81,4 +81,24 @@ const updateProduct = async (
   }
 };
 
-export { createProduct, listProducts, getProductBySlug, updateProduct };
+const deleteProduct = async (
+  req: Request<GetIdParams>,
+  res: Response<{ message: string }>,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const message = await productService.deleteProduct(req.params.id);
+
+    res.status(200).json(message);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export {
+  createProduct,
+  listProducts,
+  getProductBySlug,
+  updateProduct,
+  deleteProduct,
+};
