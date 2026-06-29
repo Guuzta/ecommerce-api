@@ -16,6 +16,11 @@ export type CreateProductResponse = {
   product: Product;
 };
 
+export type UpdateProductResponse = {
+  message: string;
+  updatedProduct: Product;
+};
+
 export type ListProductsResponse = {
   products: {
     id: string;

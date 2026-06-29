@@ -6,14 +6,13 @@ import { Prisma } from "@prisma/client";
 import AppError from "../utils/AppError.js";
 
 import type { CreateProductBody } from "../schemas/productSchema.js";
-
+import type { GetProductParams } from "../schemas/getProductSchema.js";
 import type { ListProductsResponse, Product } from "../types/product.js";
 
 import {
   listProductsSchema,
   type ListProductsQuery,
 } from "../schemas/listProductsSchema.js";
-import type { GetProductParams } from "../schemas/getProductSchema.js";
 
 const createProduct = async (data: CreateProductBody): Promise<Product> => {
   const { name, price, categoryId, description } = data;
@@ -177,4 +176,68 @@ const getProductBySlug = async (params: GetProductParams): Promise<Product> => {
   };
 };
 
-export { createProduct, listProducts, getProductBySlug };
+const updateProduct = async (id: string, data: any): Promise<Product> => {
+  const productExists = await prisma.product.findUnique({ where: { id } });
+
+  if (!productExists) {
+    throw new AppError("Product not found", 404);
+  }
+
+  const { categoryId, name } = data;
+
+  if (categoryId) {
+    const categoryExists = await prisma.category.findUnique({
+      where: { id: categoryId },
+    });
+
+    if (!categoryExists) {
+      throw new AppError("Category not found", 404);
+    }
+  }
+
+  if (name) {
+    const slug = slugify(name, {
+      lower: true,
+      strict: true,
+    });
+
+    const slugExists = await prisma.product.findUnique({ where: { slug } });
+
+    if (slugExists && slugExists.id !== id) {
+      throw new AppError("Product name is already in use", 403);
+    }
+
+    data.slug = slug;
+  }
+
+  const updatedProduct = await prisma.product.update({
+    where: {
+      id,
+    },
+
+    data,
+
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      description: true,
+      price: true,
+
+      category: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  });
+
+  return {
+    ...updatedProduct,
+    price: Number(updatedProduct.price),
+  };
+};
+
+export { createProduct, listProducts, getProductBySlug, updateProduct };

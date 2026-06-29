@@ -5,10 +5,13 @@ import * as productService from "../services/productService.js";
 import type { CreateProductBody } from "../schemas/productSchema.js";
 import type { ListProductsQuery } from "../schemas/listProductsSchema.js";
 import type { GetProductParams } from "../schemas/getProductSchema.js";
+import type { UpdateProductBody } from "../schemas/updateProductSchema.js";
+import type { GetIdParams } from "../schemas/idParamSchema.js";
 
 import type {
   CreateProductResponse,
   GetProductBySlugResponse,
+  UpdateProductResponse,
 } from "../types/product.js";
 
 const createProduct = async (
@@ -58,4 +61,24 @@ const getProductBySlug = async (
   }
 };
 
-export { createProduct, listProducts, getProductBySlug };
+const updateProduct = async (
+  req: Request<GetIdParams, {}, UpdateProductBody>,
+  res: Response<UpdateProductResponse>,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const updatedProduct = await productService.updateProduct(
+      req.params.id,
+      req.body,
+    );
+
+    res.status(200).json({
+      message: "Product updated successfully",
+      updatedProduct,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createProduct, listProducts, getProductBySlug, updateProduct };
