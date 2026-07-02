@@ -13,3 +13,14 @@ export type ListCartItemsResponse = {
   total: number;
   totalItems: number;
 };
+
+export type UpdatedCartItemResponse = {
+  quantity: number;
+  id: string;
+  product: {
+    id: string;
+    name: string;
+    price: number;
+    stock: number;
+  };
+};

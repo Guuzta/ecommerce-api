@@ -2,9 +2,13 @@ import { prisma } from "../lib/prisma.js";
 
 import AppError from "../utils/AppError.js";
 
-import type { ListCartItemsResponse } from "../types/cart.js";
+import type {
+  ListCartItemsResponse,
+  UpdatedCartItemResponse,
+} from "../types/cart.js";
 
 import type { AddCartItemsBody } from "../schemas/addCartItemsSchema.js";
+import type { UpdateCartItemsBody } from "../schemas/updateCartItemsSchema.js";
 
 const listCartItems = async (
   userId: string,
@@ -96,7 +100,7 @@ const addCartItems = async (
   const finalQuantity = cartItem ? cartItem.quantity + quantity : quantity;
 
   if (finalQuantity > product.stock) {
-    throw new AppError("Requested quantity exceeds available stock.", 400);
+    throw new AppError("Requested quantity exceeds available stock.", 409);
   }
 
   if (cartItem) {
@@ -127,4 +131,61 @@ const addCartItems = async (
   };
 };
 
-export { listCartItems, addCartItems };
+const updateCartItems = async (
+  userId: string,
+  cartItemId: string,
+  data: UpdateCartItemsBody,
+): Promise<UpdatedCartItemResponse> => {
+  const { quantity } = data;
+
+  const cartItem = await prisma.cartItem.findFirst({
+    where: {
+      id: cartItemId,
+      cart: {
+        userId,
+      },
+    },
+    include: {
+      product: true,
+    },
+  });
+
+  if (!cartItem) {
+    throw new AppError("Cart item not found", 404);
+  }
+
+  if (quantity > cartItem.product.stock) {
+    throw new AppError("Requested quantity exceeds available stock.", 409);
+  }
+
+  const updatedItem = await prisma.cartItem.update({
+    where: {
+      id: cartItemId,
+    },
+    data: {
+      quantity,
+    },
+    select: {
+      id: true,
+      quantity: true,
+      product: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          stock: true,
+        },
+      },
+    },
+  });
+
+  return {
+    ...updatedItem,
+    product: {
+      ...updatedItem.product,
+      price: Number(updatedItem.product.price),
+    },
+  };
+};
+
+export { listCartItems, addCartItems, updateCartItems };

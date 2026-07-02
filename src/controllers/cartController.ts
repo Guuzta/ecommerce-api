@@ -2,9 +2,14 @@ import type { Request, Response, NextFunction } from "express";
 
 import * as cartService from "../services/cartService.js";
 
-import type { ListCartItemsResponse } from "../types/cart.js";
+import type {
+  ListCartItemsResponse,
+  UpdatedCartItemResponse,
+} from "../types/cart.js";
 
 import type { AddCartItemsBody } from "../schemas/addCartItemsSchema.js";
+import type { UpdateCartItemsBody } from "../schemas/updateCartItemsSchema.js";
+import type { GetIdParams } from "../schemas/idParamSchema.js";
 
 const listCartItems = async (
   req: Request,
@@ -34,4 +39,22 @@ const addCartItems = async (
   }
 };
 
-export { listCartItems, addCartItems };
+const updateCartItems = async (
+  req: Request<GetIdParams, {}, UpdateCartItemsBody>,
+  res: Response<UpdatedCartItemResponse>,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const updatedItem = await cartService.updateCartItems(
+      req.user!.sub,
+      req.params.id,
+      req.body,
+    );
+
+    res.status(200).json(updatedItem);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { listCartItems, addCartItems, updateCartItems };
