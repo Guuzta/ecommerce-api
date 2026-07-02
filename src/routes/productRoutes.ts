@@ -6,7 +6,7 @@ import requireAuth from "../middlewares/requireAuth.js";
 import requireAdmin from "../middlewares/requireAdmin.js";
 import validateInput from "../middlewares/validateInput.js";
 
-import { createProductSchema } from "../schemas/productSchema.js";
+import { createProductSchema } from "../schemas/createProductSchema.js";
 import { getProductSchema } from "../schemas/getProductSchema.js";
 import { idParamsSchema } from "../schemas/idParamSchema.js";
 import { updateProductSchema } from "../schemas/updateProductSchema.js";

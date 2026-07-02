@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 
 import * as productService from "../services/productService.js";
 
-import type { CreateProductBody } from "../schemas/productSchema.js";
+import type { CreateProductBody } from "../schemas/createProductSchema.js";
 import type { ListProductsQuery } from "../schemas/listProductsSchema.js";
 import type { GetProductParams } from "../schemas/getProductSchema.js";
 import type { UpdateProductBody } from "../schemas/updateProductSchema.js";

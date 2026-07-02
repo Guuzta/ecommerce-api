@@ -4,6 +4,7 @@ export type Product = {
   slug: string;
   description: string | null;
   price: number;
+  stock: number;
   category: {
     name: string;
     id: string;
@@ -28,6 +29,7 @@ export type ListProductsResponse = {
     slug: string;
     description: string | null;
     price: number;
+    stock: number;
     category: {
       name: string;
       slug: string;

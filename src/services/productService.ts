@@ -5,7 +5,7 @@ import { Prisma } from "@prisma/client";
 
 import AppError from "../utils/AppError.js";
 
-import type { CreateProductBody } from "../schemas/productSchema.js";
+import type { CreateProductBody } from "../schemas/createProductSchema.js";
 import type { GetProductParams } from "../schemas/getProductSchema.js";
 import type { ListProductsResponse, Product } from "../types/product.js";
 
@@ -15,7 +15,7 @@ import {
 } from "../schemas/listProductsSchema.js";
 
 const createProduct = async (data: CreateProductBody): Promise<Product> => {
-  const { name, price, categoryId, description } = data;
+  const { name, price, categoryId, description, stock } = data;
 
   const categoryExists = await prisma.category.findUnique({
     where: { id: categoryId },
@@ -44,6 +44,7 @@ const createProduct = async (data: CreateProductBody): Promise<Product> => {
       slug,
       description,
       price,
+      stock,
       categoryId,
     },
 
@@ -53,6 +54,7 @@ const createProduct = async (data: CreateProductBody): Promise<Product> => {
       slug: true,
       description: true,
       price: true,
+      stock: true,
 
       category: {
         select: {
@@ -114,6 +116,7 @@ const listProducts = async (
         slug: true,
         description: true,
         price: true,
+        stock: true,
         category: {
           select: {
             name: true,
@@ -155,6 +158,7 @@ const getProductBySlug = async (params: GetProductParams): Promise<Product> => {
       slug: true,
       description: true,
       price: true,
+      stock: true,
 
       category: {
         select: {
@@ -223,6 +227,7 @@ const updateProduct = async (id: string, data: any): Promise<Product> => {
       slug: true,
       description: true,
       price: true,
+      stock: true,
 
       category: {
         select: {

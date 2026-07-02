@@ -7,6 +7,7 @@ export const createProductSchema = z.object({
     .optional()
     .transform((value) => value ?? null),
   price: z.coerce.number().positive(),
+  stock: z.coerce.number().int().positive(),
   categoryId: z.uuid(),
 });
 

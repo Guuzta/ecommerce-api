@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createProductSchema } from "../schemas/productSchema.js";
+import { createProductSchema } from "./createProductSchema.js";
 
 export const updateProductSchema = createProductSchema
   .partial()

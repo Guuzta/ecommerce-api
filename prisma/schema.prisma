@@ -46,6 +46,7 @@ model Product {
   slug        String  @unique
   description String?
   price       Decimal
+  stock       Int
 
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
