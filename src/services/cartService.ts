@@ -84,22 +84,28 @@ const addCartItems = async (
     });
   }
 
-  const cartItem = await prisma.cartItem.findFirst({
+  const cartItem = await prisma.cartItem.findUnique({
     where: {
-      cartId: cart.id,
-      productId,
+      cartId_productId: {
+        cartId: cart.id,
+        productId,
+      },
     },
   });
 
-  if (cartItem) {
-    const newQuantity = cartItem.quantity + quantity;
+  const finalQuantity = cartItem ? cartItem.quantity + quantity : quantity;
 
+  if (finalQuantity > product.stock) {
+    throw new AppError("Requested quantity exceeds available stock.", 400);
+  }
+
+  if (cartItem) {
     await prisma.cartItem.update({
       where: {
         id: cartItem.id,
       },
       data: {
-        quantity: newQuantity,
+        quantity: finalQuantity,
       },
     });
 
@@ -112,7 +118,7 @@ const addCartItems = async (
     data: {
       cartId: cart.id,
       productId,
-      quantity,
+      quantity: finalQuantity,
     },
   });
 
