@@ -154,7 +154,9 @@ const updateCartItems = async (
     throw new AppError("Cart item not found", 404);
   }
 
-  if (quantity > cartItem.product.stock) {
+  const finalQuantity = cartItem.quantity + quantity;
+
+  if (finalQuantity > cartItem.product.stock) {
     throw new AppError("Requested quantity exceeds available stock.", 409);
   }
 
@@ -163,7 +165,7 @@ const updateCartItems = async (
       id: cartItemId,
     },
     data: {
-      quantity,
+      quantity: finalQuantity,
     },
     select: {
       id: true,
