@@ -26,6 +26,13 @@ router.patch(
   requireAuth,
   validateInput(idParamsSchema, "params"),
   validateInput(updateCartItemsSchema, "body"),
-  cartController.updateCartItems
+  cartController.updateCartItems,
+);
+
+router.delete(
+  "/cart/items/:id",
+  requireAuth,
+  validateInput(idParamsSchema, "params"),
+  cartController.deleteCartItems
 );
 export default router;

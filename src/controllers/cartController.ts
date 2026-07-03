@@ -57,4 +57,21 @@ const updateCartItems = async (
   }
 };
 
-export { listCartItems, addCartItems, updateCartItems };
+const deleteCartItems = async (
+  req: Request<GetIdParams>,
+  res: Response<{ message: string }>,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const message = await cartService.deleteCartItems(
+      req.user!.sub,
+      req.params.id,
+    );
+
+    res.status(200).json(message);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { listCartItems, addCartItems, updateCartItems, deleteCartItems };
