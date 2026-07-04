@@ -21,6 +21,7 @@ model User {
   updatedAt DateTime  @updatedAt
   sessions  Session[]
   cart      Cart?
+  orders    Order[]
 }
 
 model Session {
@@ -53,8 +54,9 @@ model Product {
 
   cartItems CartItem[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  orderItems OrderItem[]
 }
 
 model Cart {
@@ -77,4 +79,43 @@ model CartItem {
   quantity Int @default(1)
 
   @@unique([cartId, productId])
+}
+
+model Order {
+  id     String     @id @default(uuid())
+  userId String
+  status OrderSatus @default(PENDING)
+  total  Decimal
+
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  orderItems OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id String @id @default(uuid())
+
+  orderId   String
+  productId String
+
+  quantity  Int
+  unitPrice Decimal
+  subtotal  Decimal
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("order_items")
+}
+
+enum OrderSatus {
+  PENDING
+  PAID
+  CANCELLED
 }

@@ -6,6 +6,7 @@ import authRoutes from "./routes/authRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
+import orderRoutes from './routes/orderRoutes.js'
 
 import errorHandler from "./middlewares/errorHandler.js";
 
@@ -19,6 +20,7 @@ app.use("/auth", authRoutes);
 app.use("/", categoryRoutes);
 app.use("/", productRoutes);
 app.use("/", cartRoutes);
+app.use('/', orderRoutes)
 
 app.use(errorHandler);
 
