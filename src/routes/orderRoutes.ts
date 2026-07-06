@@ -8,4 +8,6 @@ const router = Router();
 
 router.post("/orders/checkout", requireAuth, orderController.createOrder);
 
+router.get('/orders', requireAuth, orderController.listOrders)
+
 export default router;

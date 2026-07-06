@@ -2,7 +2,7 @@ import { prisma } from "../lib/prisma.js";
 
 import AppError from "../utils/AppError.js";
 
-import type { CreateOrderResponse } from "../types/order.js";
+import type { CreateOrderResponse, ListOrderResponse } from "../types/order.js";
 
 const createOrder = async (userId: string): Promise<CreateOrderResponse> => {
   const cart = await prisma.cart.findUnique({
@@ -123,4 +123,38 @@ const createOrder = async (userId: string): Promise<CreateOrderResponse> => {
   };
 };
 
-export { createOrder };
+const listOrders = async (userId: string): Promise<ListOrderResponse> => {
+  const orders = await prisma.order.findMany({
+    where: { userId },
+    orderBy: {
+      createdAt: "desc",
+    },
+    select: {
+      id: true,
+      status: true,
+      total: true,
+      createdAt: true,
+
+      orderItems: {
+        select: {
+          product: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const formattedOrder = orders.map((order) => ({
+    ...order,
+    total: Number(order.total),
+  }));
+
+  return {
+    orders: formattedOrder,
+  };
+};
+
+export { createOrder, listOrders };
