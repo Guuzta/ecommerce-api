@@ -2,7 +2,11 @@ import { prisma } from "../lib/prisma.js";
 
 import AppError from "../utils/AppError.js";
 
-import type { CreateOrderResponse, ListOrderResponse } from "../types/order.js";
+import type {
+  CreateOrderResponse,
+  GetOrderByIdResponse,
+  ListOrderResponse,
+} from "../types/order.js";
 
 const createOrder = async (userId: string): Promise<CreateOrderResponse> => {
   const cart = await prisma.cart.findUnique({
@@ -157,4 +161,59 @@ const listOrders = async (userId: string): Promise<ListOrderResponse> => {
   };
 };
 
-export { createOrder, listOrders };
+const getOrderById = async (
+  userId: string,
+  orderId: string,
+): Promise<GetOrderByIdResponse> => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: {
+      id: true,
+      userId: true,
+      status: true,
+      total: true,
+      createdAt: true,
+
+      orderItems: {
+        select: {
+          id: true,
+          quantity: true,
+          unitPrice: true,
+          subtotal: true,
+
+          product: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!order) {
+    throw new AppError("Order not found", 404);
+  }
+
+  if (order.userId !== userId) {
+    throw new AppError("Unauthorized", 403);
+  }
+
+  const formattedOrder = {
+    ...order,
+    total: Number(order.total),
+    orderItems: order.orderItems.map((item) => ({
+      ...item,
+      unitPrice: Number(item.unitPrice),
+      subtotal: Number(item.subtotal),
+    })),
+  };
+
+  return {
+    order: formattedOrder,
+  };
+};
+
+export { createOrder, listOrders, getOrderById };

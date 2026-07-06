@@ -47,3 +47,24 @@ export type ListOrderResponse = {
     }[];
   }[];
 };
+
+export type GetOrderByIdResponse = {
+  order: {
+    id: string;
+    userId: string;
+    status: Order["status"];
+    total: number;
+    createdAt: Date;
+    orderItems: {
+      id: string;
+      quantity: number;
+      unitPrice: number;
+      subtotal: number;
+      product: {
+        id: string;
+        name: string;
+        slug: string;
+      };
+    }[];
+  };
+};

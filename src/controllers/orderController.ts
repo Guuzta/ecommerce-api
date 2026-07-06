@@ -2,7 +2,13 @@ import type { Request, Response, NextFunction } from "express";
 
 import * as orderService from "../services/orderService.js";
 
-import type { CreateOrderResponse, ListOrderResponse } from "../types/order.js";
+import type {
+  CreateOrderResponse,
+  GetOrderByIdResponse,
+  ListOrderResponse,
+} from "../types/order.js";
+
+import type { GetIdParams } from "../schemas/idParamSchema.js";
 
 const createOrder = async (
   req: Request,
@@ -32,4 +38,18 @@ const listOrders = async (
   }
 };
 
-export { createOrder, listOrders };
+const getOrderById = async (
+  req: Request<GetIdParams>,
+  res: Response<GetOrderByIdResponse>,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const order = await orderService.getOrderById(req.user!.sub, req.params.id);
+
+    res.status(200).json(order);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createOrder, listOrders, getOrderById };
