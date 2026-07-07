@@ -92,6 +92,7 @@ model Order {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   orderItems OrderItem[]
+  payment    Payment?
 
   @@map("orders")
 }
@@ -118,4 +119,23 @@ enum OrderSatus {
   PENDING
   PAID
   CANCELLED
+}
+
+model Payment {
+  id      String        @id @default(uuid())
+  orderId String        @unique
+  amount  Decimal
+  status  PaymentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+  FAILED
 }
