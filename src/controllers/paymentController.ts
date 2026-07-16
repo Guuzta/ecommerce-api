@@ -20,4 +20,18 @@ const pay = async (
   }
 };
 
-export { pay };
+const cancel = async (
+  req: Request<GetIdParams>,
+  res: Response<{ message: string }>,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const message = await paymentService.cancel(req.params.id, req.user!.sub)
+
+    res.status(200).json(message)
+  } catch (error) {
+    next(error)
+  }
+};
+
+export { pay, cancel };

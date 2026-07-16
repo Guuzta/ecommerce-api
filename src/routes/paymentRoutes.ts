@@ -16,4 +16,11 @@ router.post(
   paymentController.pay,
 );
 
+router.post(
+  "/payments/:orderId/cancel",
+  requireAuth,
+  validateInput(idParamsSchema, "params"),
+  paymentController.cancel,
+);
+
 export default router;
