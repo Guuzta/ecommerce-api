@@ -29,6 +29,8 @@ const config: Config = {
 
   clearMocks: true,
 
+  maxWorkers: 1,
+
   collectCoverageFrom: ["src/**/*.ts", "!src/server.ts", "!src/app.ts"],
 
   coverageDirectory: "coverage",
