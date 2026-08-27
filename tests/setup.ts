@@ -6,7 +6,10 @@ beforeAll(async () => {
   await prisma.$connect();
 });
 
-afterEach(async () => {});
+afterEach(async () => {
+  await prisma.session.deleteMany();
+  await prisma.user.deleteMany();
+});
 
 afterAll(async () => {
   await prisma.$disconnect();
